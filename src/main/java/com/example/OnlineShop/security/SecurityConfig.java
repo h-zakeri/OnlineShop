@@ -27,15 +27,14 @@ public class SecurityConfig {
                         .requestMatchers("/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET,"/products").permitAll()
                         .requestMatchers(HttpMethod.POST,"/products/**").hasRole("ADMIN")
-                       .requestMatchers(HttpMethod.DELETE,"/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/orders/*/complete").hasRole("ADMIN")
                         .requestMatchers("/cart").authenticated()
                         .requestMatchers("/cart/**").authenticated()
-                       .requestMatchers("/orders/**").authenticated()
+                        .requestMatchers("/orders/**").authenticated()
                         .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated());
-                 //               .anyRequest().permitAll());
-
         return http.build();
     }
 }

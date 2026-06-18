@@ -6,6 +6,7 @@ import com.example.OnlineShop.model.*;
 import com.example.OnlineShop.service.OrderService;
 import com.example.OnlineShop.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.example.OnlineShop.mapper.OrderMapper;
 
@@ -25,30 +26,29 @@ public class OrderController {
 
     //create Order
     @PostMapping
-    public OrderResponse createOrder(@RequestParam Long userId){
-        User user = userService.getUserById(userId);
+    public OrderResponse createOrder(Authentication authentication){
+        User user = userService.findByUsername(authentication.getName());
         Order order = orderService.createOrder(user);
         return OrderMapper.mapToResponse(order, orderService.calculateTotal(order));
     }
 
     //cancel order
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancelOrder(@PathVariable Long id,@RequestParam Long userId) {
-        User user = userService.getUserById(userId);
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long id,Authentication authentication) {
+        User user = userService.findByUsername(authentication.getName());
         orderService.cancelOrder(id,user);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/complete")
-    public ResponseEntity<Void> completeOrder(@PathVariable Long id,@RequestParam Long userId) {
-        User user = userService.getUserById(userId);
-        orderService.completeOrder(id,user);
+    public ResponseEntity<Void> completeOrder(@PathVariable Long id) {
+        orderService.completeOrder(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public List<OrderResponse> getOrders(@RequestParam Long userId){
-        User user = userService.getUserById(userId);
+    public List<OrderResponse> getOrders(Authentication authentication){
+        User user = userService.findByUsername(authentication.getName());
         List<Order> orders = orderService.getOrders(user);
         return orders
                 .stream()
@@ -57,8 +57,8 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public OrderResponse getOrderById(@PathVariable Long id, @RequestParam Long userId){
-        User user = userService.getUserById(userId);
+    public OrderResponse getOrderById(@PathVariable Long id, Authentication authentication){
+        User user = userService.findByUsername(authentication.getName());
         Order order = orderService.getOrderById(user,id);
         return OrderMapper.mapToResponse(order,orderService.calculateTotal(order));
     }

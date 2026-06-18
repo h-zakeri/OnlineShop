@@ -39,8 +39,9 @@ public class UserService {
         return savedUser;
     }
 
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() ->  new ResourceNotFoundException("User not found"));
     }
 
     public User getUserById(Long userId){

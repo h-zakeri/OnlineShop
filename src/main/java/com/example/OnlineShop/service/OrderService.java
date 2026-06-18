@@ -49,17 +49,23 @@ public class OrderService {
             newItem.setPrice(item.getProduct().getPrice());
             newItem.setQuantity(item.getQuantity());
             newItem.setOrder(order);
-            newItem.getProduct().setStockQuantity(
-            newItem.getProduct().getStockQuantity() - item.getQuantity()
+            Product product = item.getProduct();
+
+            product.setStockQuantity(
+                    product.getStockQuantity() - item.getQuantity()
             );
+
+            productRepository.save(product);
             productRepository.save(newItem.getProduct());
             order.getItems().add(newItem);
         }
 
         cart.getItems().clear();
         order.setStatus(OrderStatus.PENDING);
-        orderRepository.save(order);
+
         cartRepository.save(cart);
+        orderRepository.save(order);
+
         return order;
     }
 
@@ -100,8 +106,8 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    public void completeOrder(Long orderId,User user){
-        Order order = orderRepository.findByIdAndOwner(orderId,user)
+    public void completeOrder(Long id){
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         if(order.getStatus() == OrderStatus.PENDING){
             order.setStatus(OrderStatus.COMPLETED);

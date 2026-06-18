@@ -1,6 +1,7 @@
 package com.example.OnlineShop.dto;
 
 import com.example.OnlineShop.model.Role;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -15,6 +16,6 @@ public class RegisterRequest {
     @NotBlank
     private String password;
 
-    @NotBlank
+    @Email
     private String email;
 }
