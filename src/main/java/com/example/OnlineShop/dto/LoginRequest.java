@@ -1,6 +1,5 @@
 package com.example.OnlineShop.dto;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

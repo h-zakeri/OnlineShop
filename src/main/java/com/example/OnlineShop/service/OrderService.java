@@ -1,5 +1,6 @@
 package com.example.OnlineShop.service;
 
+import com.example.OnlineShop.event.OrderCompletedEvent;
 import com.example.OnlineShop.exception.BadRequestException;
 import com.example.OnlineShop.exception.ResourceNotFoundException;
 import com.example.OnlineShop.model.*;
@@ -8,10 +9,9 @@ import com.example.OnlineShop.repository.OrderRepository;
 import com.example.OnlineShop.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
+import org.springframework.context.ApplicationEventPublisher;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -19,11 +19,16 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public OrderService(CartRepository cartRepository, OrderRepository orderRepository, ProductRepository productRepository) {
+    public OrderService(CartRepository cartRepository,
+                        OrderRepository orderRepository,
+                        ProductRepository productRepository,
+                        ApplicationEventPublisher eventPublisher) {
         this.cartRepository = cartRepository;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     // checkout
@@ -112,6 +117,9 @@ public class OrderService {
         if(order.getStatus() == OrderStatus.PENDING){
             order.setStatus(OrderStatus.COMPLETED);
             orderRepository.save(order);
+
+            eventPublisher.publishEvent(new OrderCompletedEvent(order));
+
         }else{
             throw new BadRequestException("Order cannot be complete");
         }
