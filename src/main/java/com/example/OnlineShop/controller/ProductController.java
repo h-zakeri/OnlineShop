@@ -4,15 +4,15 @@ import com.example.OnlineShop.dto.CreateProductRequest;
 import com.example.OnlineShop.dto.ProductResponse;
 import com.example.OnlineShop.dto.UpdateProductRequest;
 import com.example.OnlineShop.mapper.ProductMapper;
+import com.example.OnlineShop.model.Category;
 import com.example.OnlineShop.model.Product;
 import com.example.OnlineShop.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.math.BigDecimal;
 
 
 @RestController
@@ -32,13 +32,17 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getProducts(){
-        List<Product> products = productService.getAllProduct();
-        List<ProductResponse> responses = new ArrayList<>();
-        for(Product product : products){
-            responses.add(ProductMapper.mapToResponse(product));
-        }
-        return responses;
+    public Page<ProductResponse> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(required = false) Category category,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+
+        return productService.getAllProduct(page, size,sortBy,category,minPrice,maxPrice)
+                .map(ProductMapper::mapToResponse);
+
     }
 
     @GetMapping("/{id}")

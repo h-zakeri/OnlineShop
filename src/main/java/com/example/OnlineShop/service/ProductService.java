@@ -6,9 +6,12 @@ import com.example.OnlineShop.model.Product;
 import com.example.OnlineShop.model.User;
 import com.example.OnlineShop.repository.ProductRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +24,19 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> getAllProduct(){
-        return productRepository.findAll();
+    public Page<Product> getAllProduct(int page, int size, String sortBy, Category category , BigDecimal minPrice,
+                                       BigDecimal maxPrice){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        if (category != null && !category.toString().isEmpty()) {
+            return productRepository.findByCategory(category, pageable);
+        }
+        if (minPrice != null && maxPrice != null) {
+            return productRepository.findByPriceBetween(
+                    minPrice,
+                    maxPrice,
+                    pageable);
+        }
+        return productRepository.findAll(pageable);
     }
 
     public Product getProductById(Long id){
