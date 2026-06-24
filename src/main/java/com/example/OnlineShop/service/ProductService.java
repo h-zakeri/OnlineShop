@@ -69,26 +69,9 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-   // public Page<Product> getProducts(Pageable pageable) {
-   //     return productRepository.findAll(pageable);
-   // }
-
     public List<Product> getProducts() {
         return productRepository.findAll();
     }
-
-  //  public Page<Product> getProducts(Category category, String name,Pageable pageable) {
-
-    //    boolean hasTitle = (name != null && !name.isBlank());
-      //  if(category != null && hasTitle){
-        //    return productRepository.findByCategoryAndNameContaining(category,name,pageable);
-     //   }else if(category != null){
-       //     return productRepository.findByCategory(category,pageable);
-    //    }else if(hasTitle){
-      //      return productRepository.findByNameContaining(name, pageable);
-    //    }
-      //  return productRepository.findAll(pageable);
-   // }
 
 
     public List<Product> getProducts(Category category, String name) {
