@@ -9,12 +9,16 @@ import com.example.OnlineShop.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
+    private static final Logger logger =
+            LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository,CartRepository cartRepository,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -24,17 +28,24 @@ public class UserService {
 
     public User register(String name,String username, String password, Role role,String email) {
 
+        logger.info("Registering new user '{}'.", username);
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
         user.setName(name);
         user.setRole(role);
+
         User savedUser = userRepository.save(user);
+
+        logger.info("User '{}' registered successfully.", username);
 
         Cart cart = new Cart();
         cart.setOwner(savedUser);
         cartRepository.save(cart);
+
+        logger.info("Cart created for user '{}'.", username);
 
         return savedUser;
     }

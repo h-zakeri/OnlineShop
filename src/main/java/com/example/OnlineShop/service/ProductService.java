@@ -8,14 +8,16 @@ import com.example.OnlineShop.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private static final Logger logger =
+            LoggerFactory.getLogger(ProductService.class);
 
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -38,14 +40,15 @@ public class ProductService {
         }
     }
 
-    /////////// CREATE
     public Product createProduct(Product product){
+        logger.info("Creating product: {}", product.getName());
 
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+
+        logger.info("Product created successfully. ID: {}", savedProduct.getId());
+
+        return savedProduct;
     }
-
-
-    /////////////// UPDATE
 
     public Product updateProduct(Long id,Product updatedProduct){
         Product product = productRepository.findById(id)
@@ -69,26 +72,9 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-   // public Page<Product> getProducts(Pageable pageable) {
-   //     return productRepository.findAll(pageable);
-   // }
-
     public List<Product> getProducts() {
         return productRepository.findAll();
     }
-
-  //  public Page<Product> getProducts(Category category, String name,Pageable pageable) {
-
-    //    boolean hasTitle = (name != null && !name.isBlank());
-      //  if(category != null && hasTitle){
-        //    return productRepository.findByCategoryAndNameContaining(category,name,pageable);
-     //   }else if(category != null){
-       //     return productRepository.findByCategory(category,pageable);
-    //    }else if(hasTitle){
-      //      return productRepository.findByNameContaining(name, pageable);
-    //    }
-      //  return productRepository.findAll(pageable);
-   // }
 
 
     public List<Product> getProducts(Category category, String name) {
